@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "DroidConnectionFragment")
         return when (item.itemId) {
-            R.id.droid_connection -> {
+            R.id.droid_connection_wifi -> {
                 val fragment =
                     DroidConnectionFragment.newInstance()
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)

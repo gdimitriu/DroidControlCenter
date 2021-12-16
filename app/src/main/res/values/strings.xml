@@ -9,6 +9,6 @@
     <string name="droid_port_title">Droid Port</string>
     <string name="droid_address_title">Droid Address</string>
     <string name="droid_default_port">8080</string>
-    <string name="droid_connection">Droid Connection</string>
+    <string name="droid_connection_wifi">Droid Connection WiFi</string>
     <string name="droid_connect">Connect</string>
 </resources>

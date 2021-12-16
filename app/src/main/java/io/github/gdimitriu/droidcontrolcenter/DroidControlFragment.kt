@@ -1,6 +1,7 @@
 package io.github.gdimitriu.droidcontrolcenter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -11,6 +12,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.OutputStreamWriter
+import java.net.Socket
 
 private const val TAG = "DroidControl"
 
@@ -40,24 +42,16 @@ class DroidControlFragment : Fragment() {
         forwardButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Move forward")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M1,0#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M1,0#\n")
                 return@setOnTouchListener true
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Stop")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M0,0#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M0,0#\n")
                 return@setOnTouchListener true
             }
             return@setOnTouchListener false
@@ -66,24 +60,16 @@ class DroidControlFragment : Fragment() {
         backwardButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Move backward")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M-1,0#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M-1,0#\n")
                 return@setOnTouchListener true
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Stop")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M0,0#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M0,0#\n")
                 return@setOnTouchListener true
             }
             return@setOnTouchListener false
@@ -91,71 +77,72 @@ class DroidControlFragment : Fragment() {
         leftButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Move left")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M0,-1#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M0,-1#\n")
                 return@setOnTouchListener true
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
                 Log.d(TAG, "Stop")
-                GlobalScope.launch {
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("M0,0#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
+                sendOneWayCommandToDroidOnWifi("M0,0#\n")
                 return@setOnTouchListener true
             }
-                return@setOnTouchListener false
-            }
-
-            rightButton.setOnTouchListener { view, motionEvent ->
-                val event = motionEvent as MotionEvent
-                if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                    Log.d(TAG, "Move right")
-                    GlobalScope.launch {
-                        val outputStreamWriter =
-                            OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                        outputStreamWriter.write("M0,1#\n")
-                        outputStreamWriter.flush()
-                        outputStreamWriter.close()
-                    }
-                    return@setOnTouchListener true
-                } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    Log.d(TAG, "Stop")
-                    GlobalScope.launch {
-                        val outputStreamWriter =
-                            OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                        outputStreamWriter.write("M0,0#\n")
-                        outputStreamWriter.flush()
-                        outputStreamWriter.close()
-                    }
-                    return@setOnTouchListener true
-                }
-                return@setOnTouchListener false
-            }
-            stopButton.setOnClickListener { view ->
-                Log.d(TAG, "Full stop")
-                GlobalScope.launch {
-
-                    val outputStreamWriter =
-                        OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                    outputStreamWriter.write("b#\n")
-                    outputStreamWriter.flush()
-                    outputStreamWriter.close()
-                }
-            }
-            return view;
+            return@setOnTouchListener false
         }
 
-        companion object {
-            fun newInstance(): DroidControlFragment {
-                return DroidControlFragment()
+        rightButton.setOnTouchListener { view, motionEvent ->
+            val event = motionEvent as MotionEvent
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
+                Log.d(TAG, "Move right")
+                sendOneWayCommandToDroidOnWifi("M0,1#\n")
+                return@setOnTouchListener true
+            } else if (event.actionMasked == MotionEvent.ACTION_UP) {
+                if (!validateSocketConnection(droidSettingsViewModel.socket))
+                    return@setOnTouchListener false
+                Log.d(TAG, "Stop")
+                sendOneWayCommandToDroidOnWifi("M0,0#\n")
+                return@setOnTouchListener true
             }
+            return@setOnTouchListener false
+        }
+        stopButton.setOnClickListener { view ->
+            if (validateSocketConnection(droidSettingsViewModel.socket)) {
+                Log.d(TAG, "Full stop")
+                sendOneWayCommandToDroidOnWifi("b#\n")
+            }
+        }
+        return view;
+    }
+
+    private fun sendOneWayCommandToDroidOnWifi(message : String) {
+        GlobalScope.launch {
+            val outputStreamWriter =
+                OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
+            outputStreamWriter.write(message)
+            outputStreamWriter.flush()
         }
     }
+
+    companion object {
+        fun newInstance(): DroidControlFragment {
+            return DroidControlFragment()
+        }
+    }
+
+    private fun validateSocketConnection(socket: Socket?): Boolean {
+        if (socket == null || socket.isClosed) {
+            val builder: AlertDialog.Builder? = activity?.let {
+                AlertDialog.Builder(it)
+            }
+            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
+            return false
+        }
+        return true
+    }
+}
