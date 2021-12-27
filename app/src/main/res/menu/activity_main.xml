@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_launcher_foreground"
         android:title="@string/droid_connection_wifi"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/droid_settings"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:title="@string/droid_settings"
+        app:showAsAction="ifRoom|withText" />
 </menu>

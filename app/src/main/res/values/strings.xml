@@ -11,4 +11,14 @@
     <string name="droid_default_port">8080</string>
     <string name="droid_connection_wifi">Droid Connection WiFi</string>
     <string name="droid_connect">Connect</string>
+    <string name="droid_settings">Droid Settings</string>
+    <string name="droid_max_power_title">Droid Maximum Power</string>
+    <string name="droid_default_max_power">4000</string>
+    <string name="droid_min_power_title">Droid Minimum Power</string>
+    <string name="droid_default_min_power">3000</string>
+    <string name="droid_stop_distance_title">Droid Stop Distance</string>
+    <string name="droid_default_stop_distance">150</string>
+    <string name="droid_low_power_distance_title">Droid Low Power Distance</string>
+    <string name="droid_default_low_power_distance">250</string>
+    <string name="droid_send_data">Send Settings</string>
 </resources>

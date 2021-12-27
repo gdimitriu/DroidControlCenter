@@ -40,6 +40,13 @@ class MainActivity : AppCompatActivity() {
                     .addToBackStack(null).commit()
                 true
             }
+            R.id.droid_settings -> {
+                val fragment =
+                    DroidSettingsFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null).commit()
+                true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

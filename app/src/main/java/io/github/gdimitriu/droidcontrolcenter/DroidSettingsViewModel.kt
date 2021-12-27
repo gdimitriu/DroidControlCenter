@@ -25,6 +25,11 @@ class DroidSettingsViewModel : ViewModel()  {
     var socket: Socket?
 
     var connectionType : ConnectionType
+    //droid settings
+    var maxPower : String
+    var minPower : String
+    var stopDistance : String
+    var lowPowerDistance : String
     init {
         Log.d(TAG, "Initialized the model view")
         ipAddress  = ""
@@ -32,6 +37,10 @@ class DroidSettingsViewModel : ViewModel()  {
         isChanged = true
         socket = null
         connectionType = ConnectionType.NONE
+        maxPower = ""
+        minPower = ""
+        stopDistance = ""
+        lowPowerDistance = ""
     }
     override fun onCleared() {
         Log.d(TAG,"Clearing and close the socket.")

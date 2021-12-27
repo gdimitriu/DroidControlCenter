@@ -66,6 +66,7 @@
             android:minHeight="48dp"
             android:text="@string/droid_default_port"
             android:textSize="18sp"
+            app:layout_constraintBottom_toTopOf="@+id/connection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/port_title" />
