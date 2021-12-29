@@ -119,8 +119,30 @@ class DroidSettingsFragment : Fragment() {
         return view;
     }
 
-    fun sendDataToDroid() {
-
+    private fun sendDataToDroid() = runBlocking  {
+        if (validateSocketConnection(droidSettingsViewModel.socket)) {
+            val job = GlobalScope.launch {
+                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
+                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
+                outputStreamWriter.write(String.format("V%s#\n",droidSettingsViewModel.maxPower))
+                outputStreamWriter.flush()
+                var status : String = inputStreamReader.readLine()
+                Log.d(TAG,status)
+                outputStreamWriter.write(String.format("v%s#\n",droidSettingsViewModel.minPower))
+                outputStreamWriter.flush()
+                status = inputStreamReader.readLine()
+                Log.d(TAG,status)
+                outputStreamWriter.write("d"+droidSettingsViewModel.lowPowerDistance + "#\n")
+                outputStreamWriter.flush()
+                status = inputStreamReader.readLine()
+                Log.d(TAG,status)
+                outputStreamWriter.write("s"+droidSettingsViewModel.stopDistance+"#\n")
+                outputStreamWriter.flush()
+                status = inputStreamReader.readLine()
+                Log.d(TAG,status)
+            }
+            job.join()
+        }
     }
     private fun getDataFromDroid()  = runBlocking {
         if (validateSocketConnection(droidSettingsViewModel.socket)) {
@@ -129,25 +151,24 @@ class DroidSettingsFragment : Fragment() {
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
                 outputStreamWriter.write("V#")
                 outputStreamWriter.flush()
-                val buffer = CharArray(255)
                 var value : String = inputStreamReader.readLine()
                 droidSettingsViewModel.maxPower = value
-                Log.d(TAG, value.toString());
+                Log.d(TAG, value.toString())
                 outputStreamWriter.write("v#")
                 outputStreamWriter.flush()
                 value = inputStreamReader.readLine()
                 droidSettingsViewModel.minPower = value
-                Log.d(TAG, value.toString());
+                Log.d(TAG, value.toString())
                 outputStreamWriter.write("d#")
                 outputStreamWriter.flush()
                 value = inputStreamReader.readLine()
                 droidSettingsViewModel.lowPowerDistance = value
-                Log.d(TAG, value.toString());
+                Log.d(TAG, value.toString())
                 outputStreamWriter.write("s#")
                 outputStreamWriter.flush()
                 value = inputStreamReader.readLine()
                 droidSettingsViewModel.stopDistance = value
-                Log.d(TAG, value.toString());
+                Log.d(TAG, value.toString())
             }
             job.join()
         }

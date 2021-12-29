@@ -41,10 +41,7 @@ class DroidConnectionFragment : Fragment() {
         portEditText = view.findViewById(R.id.port)
         connectButton = view.findViewById(R.id.connection)
         connectButton.setOnClickListener { view ->
-            if (droidSettingsViewModel.isChanged == true) {
-                connectToDroid()
-            }
-
+            connectToDroid()
         }
         val portWatcher = object : TextWatcher {
             override fun beforeTextChanged(sequence: CharSequence?, start: Int, count: Int, after: Int) {
