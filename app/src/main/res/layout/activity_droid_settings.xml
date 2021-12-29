@@ -28,7 +28,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:inputType="textUri"
+        android:inputType="number|numberDecimal"
         android:minHeight="48dp"
         android:text="@string/droid_default_max_power"
         android:textSize="18sp"
@@ -60,14 +60,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:inputType="textUri"
+        android:inputType="number|numberDecimal"
         android:minHeight="48dp"
         android:text="@string/droid_default_min_power"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/stop_distance_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/stop_distance_title"
         app:layout_constraintTop_toBottomOf="@id/min_power_title" />
 
     <TextView
@@ -92,14 +92,14 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:inputType="textUri"
+        android:inputType="number|numberDecimal"
         android:minHeight="48dp"
         android:text="@string/droid_default_stop_distance"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/low_power_distance_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/low_power_distance_title"
         app:layout_constraintTop_toBottomOf="@id/stop_distance_title" />
     <TextView
         android:id="@+id/low_power_distance_title"
@@ -110,10 +110,10 @@
         android:layout_marginEnd="16dp"
         android:text="@string/droid_low_power_distance_title"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@id/stop_distance"
+        app:layout_constraintBottom_toTopOf="@id/low_power_distance"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/low_power_distance" />
+        app:layout_constraintTop_toBottomOf="@id/stop_distance"/>
 
     <EditText
         android:id="@+id/low_power_distance"
@@ -123,7 +123,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:ems="10"
-        android:inputType="textUri"
+        android:inputType="number|numberDecimal"
         android:minHeight="48dp"
         android:text="@string/droid_default_low_power_distance"
         android:textSize="18sp"
