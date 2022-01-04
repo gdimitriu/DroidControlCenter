@@ -10,6 +10,9 @@
     <string name="droid_address_title">Droid Address</string>
     <string name="droid_default_port">8080</string>
     <string name="droid_connection_wifi">Droid Connection WiFi</string>
+    <string name="droid_connection_ble">Droid Connection Ble</string>
+    <string name="droid_ble_name">Name</string>
+    <string name="droid_ble_mac">MAC</string>
     <string name="droid_connect">Connect</string>
     <string name="droid_settings">Droid Settings</string>
     <string name="droid_max_power_title">Droid Maximum Power</string>
@@ -21,4 +24,5 @@
     <string name="droid_low_power_distance_title">Droid Low Power Distance</string>
     <string name="droid_default_low_power_distance">250</string>
     <string name="droid_send_data">Send Settings</string>
+    <string name="droid_connection_menu">Connection</string>
 </resources>

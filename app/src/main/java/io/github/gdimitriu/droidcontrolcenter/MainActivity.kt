@@ -4,9 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
+
 private const val TAG = "DroidControlMain"
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +34,14 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.droid_connection_wifi -> {
                 val fragment =
-                    DroidConnectionFragment.newInstance()
+                    DroidConnectionWiFiFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null).commit()
+                true
+            }
+            R.id.droid_connection_ble -> {
+                val fragment =
+                    DroidConnectionBleFragment.newInstance()
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                     .addToBackStack(null).commit()
                 true

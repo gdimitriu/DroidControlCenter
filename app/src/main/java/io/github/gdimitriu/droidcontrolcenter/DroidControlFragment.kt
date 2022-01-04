@@ -2,6 +2,7 @@ package io.github.gdimitriu.droidcontrolcenter
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.bluetooth.BluetoothSocket
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -42,17 +43,17 @@ class DroidControlFragment : Fragment() {
         forwardButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Move forward")
-                sendOneWayCommandToDroidOnWifi("M1,0#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M1,0#\n")) {
+                    Log.d(TAG, "Move forward")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Stop")
-                sendOneWayCommandToDroidOnWifi("M0,0#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M0,0#\n")) {
+                    Log.d(TAG, "Stop")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             }
             return@setOnTouchListener false
         }
@@ -60,34 +61,34 @@ class DroidControlFragment : Fragment() {
         backwardButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Move backward")
-                sendOneWayCommandToDroidOnWifi("M-1,0#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M-1,0#\n")) {
+                    Log.d(TAG, "Move backward")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Stop")
-                sendOneWayCommandToDroidOnWifi("M0,0#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M0,0#\n")) {
+                    Log.d(TAG, "Stop")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             }
             return@setOnTouchListener false
         }
         leftButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Move left")
-                sendOneWayCommandToDroidOnWifi("M0,-1#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M0,-1#\n")) {
+                    Log.d(TAG, "Move left")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Stop")
-                sendOneWayCommandToDroidOnWifi("M0,0#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M0,0#\n")) {
+                    Log.d(TAG, "Stop")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             }
             return@setOnTouchListener false
         }
@@ -95,36 +96,53 @@ class DroidControlFragment : Fragment() {
         rightButton.setOnTouchListener { view, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Move right")
-                sendOneWayCommandToDroidOnWifi("M0,1#\n")
-                return@setOnTouchListener true
+                if(sendOneWayCommandToDroid("M0,1#\n")) {
+                    Log.d(TAG, "Move right")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             } else if (event.actionMasked == MotionEvent.ACTION_UP) {
-                if (!validateSocketConnection(droidSettingsViewModel.socket))
-                    return@setOnTouchListener false
-                Log.d(TAG, "Stop")
-                sendOneWayCommandToDroidOnWifi("M0,0#\n")
-                return@setOnTouchListener true
+                if (sendOneWayCommandToDroid("M0,0#\n")) {
+                    Log.d(TAG, "Stop")
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
             }
             return@setOnTouchListener false
         }
         stopButton.setOnClickListener { view ->
-            if (validateSocketConnection(droidSettingsViewModel.socket)) {
+            if (sendOneWayCommandToDroid("b#\n"))
                 Log.d(TAG, "Full stop")
-                sendOneWayCommandToDroidOnWifi("b#\n")
-            }
         }
         return view;
     }
 
-    private fun sendOneWayCommandToDroidOnWifi(message : String) {
-        GlobalScope.launch {
-            val outputStreamWriter =
-                OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-            outputStreamWriter.write(message)
-            outputStreamWriter.flush()
+    private fun sendOneWayCommandToDroid(message : String) : Boolean {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
+            GlobalScope.launch {
+                val outputStreamWriter =
+                    OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
+                outputStreamWriter.write(message)
+                outputStreamWriter.flush()
+            }
+            return true
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+            GlobalScope.launch {
+                val outputStreamWriter =
+                    OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                outputStreamWriter.write(message)
+                outputStreamWriter.flush()
+            }
+            return true
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.NONE) {
+            val builder: AlertDialog.Builder? = activity?.let {
+                AlertDialog.Builder(it)
+            }
+            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
         }
+        return false
     }
 
     companion object {
@@ -133,8 +151,21 @@ class DroidControlFragment : Fragment() {
         }
     }
 
-    private fun validateSocketConnection(socket: Socket?): Boolean {
+    private fun validateWiFiSocketConnection(socket: Socket?): Boolean {
         if (socket == null || socket.isClosed) {
+            val builder: AlertDialog.Builder? = activity?.let {
+                AlertDialog.Builder(it)
+            }
+            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
+            return false
+        }
+        return true
+    }
+
+    private fun validateBleSocketConnection(socket: BluetoothSocket?): Boolean {
+        if (socket == null || !socket.isConnected) {
             val builder: AlertDialog.Builder? = activity?.let {
                 AlertDialog.Builder(it)
             }

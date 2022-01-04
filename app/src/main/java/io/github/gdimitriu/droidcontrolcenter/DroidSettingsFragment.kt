@@ -1,6 +1,7 @@
 package io.github.gdimitriu.droidcontrolcenter
 
 import android.app.AlertDialog
+import android.bluetooth.BluetoothSocket
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -119,62 +120,97 @@ class DroidSettingsFragment : Fragment() {
         return view;
     }
 
+    private fun sendDataToDroid(inputStreamReader: BufferedReader, outputStreamWriter: OutputStreamWriter) {
+        outputStreamWriter.write(String.format("V%s#\n",droidSettingsViewModel.maxPower))
+        outputStreamWriter.flush()
+        var status : String = inputStreamReader.readLine()
+        Log.d(TAG,status)
+        outputStreamWriter.write(String.format("v%s#\n",droidSettingsViewModel.minPower))
+        outputStreamWriter.flush()
+        status = inputStreamReader.readLine()
+        Log.d(TAG,status)
+        outputStreamWriter.write("d"+droidSettingsViewModel.lowPowerDistance + "#\n")
+        outputStreamWriter.flush()
+        status = inputStreamReader.readLine()
+        Log.d(TAG,status)
+        outputStreamWriter.write("s"+droidSettingsViewModel.stopDistance+"#\n")
+        outputStreamWriter.flush()
+        status = inputStreamReader.readLine()
+        Log.d(TAG,status)
+    }
+
     private fun sendDataToDroid() = runBlocking  {
-        if (validateSocketConnection(droidSettingsViewModel.socket)) {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
             val job = GlobalScope.launch {
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
-                outputStreamWriter.write(String.format("V%s#\n",droidSettingsViewModel.maxPower))
-                outputStreamWriter.flush()
-                var status : String = inputStreamReader.readLine()
-                Log.d(TAG,status)
-                outputStreamWriter.write(String.format("v%s#\n",droidSettingsViewModel.minPower))
-                outputStreamWriter.flush()
-                status = inputStreamReader.readLine()
-                Log.d(TAG,status)
-                outputStreamWriter.write("d"+droidSettingsViewModel.lowPowerDistance + "#\n")
-                outputStreamWriter.flush()
-                status = inputStreamReader.readLine()
-                Log.d(TAG,status)
-                outputStreamWriter.write("s"+droidSettingsViewModel.stopDistance+"#\n")
-                outputStreamWriter.flush()
-                status = inputStreamReader.readLine()
-                Log.d(TAG,status)
+                sendDataToDroid(inputStreamReader, outputStreamWriter)
+            }
+            job.join()
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+            val job = GlobalScope.launch {
+                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.getInputStream()))
+                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                sendDataToDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()
         }
     }
+
+    private fun getDataFromDroid(inputStreamReader : BufferedReader, outputStreamWriter: OutputStreamWriter) {
+        outputStreamWriter.write("V#")
+        outputStreamWriter.flush()
+        var value : String = inputStreamReader.readLine()
+        droidSettingsViewModel.maxPower = value
+        Log.d(TAG, value.toString())
+        outputStreamWriter.write("v#")
+        outputStreamWriter.flush()
+        value = inputStreamReader.readLine()
+        droidSettingsViewModel.minPower = value
+        Log.d(TAG, value.toString())
+        outputStreamWriter.write("d#")
+        outputStreamWriter.flush()
+        value = inputStreamReader.readLine()
+        droidSettingsViewModel.lowPowerDistance = value
+        Log.d(TAG, value.toString())
+        outputStreamWriter.write("s#")
+        outputStreamWriter.flush()
+        value = inputStreamReader.readLine()
+        droidSettingsViewModel.stopDistance = value
+        Log.d(TAG, value.toString())
+    }
+
     private fun getDataFromDroid()  = runBlocking {
-        if (validateSocketConnection(droidSettingsViewModel.socket)) {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
             val job = GlobalScope.launch {
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
-                outputStreamWriter.write("V#")
-                outputStreamWriter.flush()
-                var value : String = inputStreamReader.readLine()
-                droidSettingsViewModel.maxPower = value
-                Log.d(TAG, value.toString())
-                outputStreamWriter.write("v#")
-                outputStreamWriter.flush()
-                value = inputStreamReader.readLine()
-                droidSettingsViewModel.minPower = value
-                Log.d(TAG, value.toString())
-                outputStreamWriter.write("d#")
-                outputStreamWriter.flush()
-                value = inputStreamReader.readLine()
-                droidSettingsViewModel.lowPowerDistance = value
-                Log.d(TAG, value.toString())
-                outputStreamWriter.write("s#")
-                outputStreamWriter.flush()
-                value = inputStreamReader.readLine()
-                droidSettingsViewModel.stopDistance = value
-                Log.d(TAG, value.toString())
+                getDataFromDroid(inputStreamReader, outputStreamWriter)
+            }
+            job.join()
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+            val job = GlobalScope.launch {
+                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.getInputStream()))
+                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                getDataFromDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()
         }
     }
-    private fun validateSocketConnection(socket: Socket?): Boolean {
+    private fun validateWiFiSocketConnection(socket: Socket?): Boolean {
         if (socket == null || socket.isClosed) {
+            val builder: AlertDialog.Builder? = activity?.let {
+                AlertDialog.Builder(it)
+            }
+            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
+            return false
+        }
+        return true
+    }
+    private fun validateBleSocketConnection(socket: BluetoothSocket?): Boolean {
+        if (socket == null || !socket.isConnected) {
             val builder: AlertDialog.Builder? = activity?.let {
                 AlertDialog.Builder(it)
             }

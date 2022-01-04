@@ -1,5 +1,6 @@
 package io.github.gdimitriu.droidcontrolcenter
 
+import android.bluetooth.BluetoothSocket
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import java.net.Socket
@@ -24,6 +25,8 @@ class DroidSettingsViewModel : ViewModel()  {
 
     var socket: Socket?
 
+    var bleSocket: BluetoothSocket?
+
     var connectionType : ConnectionType
     //droid settings
     var maxPower : String
@@ -41,10 +44,12 @@ class DroidSettingsViewModel : ViewModel()  {
         minPower = ""
         stopDistance = ""
         lowPowerDistance = ""
+        bleSocket = null
     }
     override fun onCleared() {
         Log.d(TAG,"Clearing and close the socket.")
         super.onCleared()
         socket?.close()
+        bleSocket?.close()
     }
 }

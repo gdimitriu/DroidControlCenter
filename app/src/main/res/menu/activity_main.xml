@@ -2,10 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/droid_connection_wifi"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="@string/droid_connection_wifi"
-        app:showAsAction="ifRoom|withText" />
+        android:id="@+id/connection_menu"
+        android:title="@string/droid_connection_menu"
+        app:showAsAction="ifRoom|withText">
+        <menu>
+        <item
+            android:id="@+id/droid_connection_wifi"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:title="@string/droid_connection_wifi"
+            app:showAsAction="ifRoom|withText" />
+        <item
+            android:id="@+id/droid_connection_ble"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:title="@string/droid_connection_ble"
+            app:showAsAction="ifRoom|withText" />
+        </menu>
+    </item>
     <item
         android:id="@+id/droid_settings"
         android:icon="@drawable/ic_launcher_foreground"

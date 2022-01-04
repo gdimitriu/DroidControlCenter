@@ -18,7 +18,7 @@ import java.net.Socket
 
 private const val KEY_IPADDRESS="KEY_IP_ADDRESS"
 private const val KEY_PORT = "KEY_PORT"
-class DroidConnectionFragment : Fragment() {
+class DroidConnectionWiFiFragment : Fragment() {
     private lateinit var ipEditText: EditText
     private lateinit var portEditText: EditText
     private lateinit var connectButton : Button
@@ -101,8 +101,8 @@ class DroidConnectionFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): DroidConnectionFragment {
-            return DroidConnectionFragment()
+        fun newInstance(): DroidConnectionWiFiFragment {
+            return DroidConnectionWiFiFragment()
         }
     }
 
