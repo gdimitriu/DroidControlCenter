@@ -1,5 +1,6 @@
 package io.github.gdimitriu.droidcontrolcenter
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -25,6 +26,7 @@ import java.util.*
 
 private const val TAG = "DroidConnectionBle"
 
+@SuppressLint("MissingPermission")
 class DroidConnectionBleFragment : Fragment() {
 
     private val REQUEST_ENABLE_BT = 1
@@ -45,6 +47,7 @@ class DroidConnectionBleFragment : Fragment() {
             updateUI(pairedDevices.toList())
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,

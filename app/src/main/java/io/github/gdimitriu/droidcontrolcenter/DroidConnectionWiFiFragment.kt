@@ -36,10 +36,10 @@ class DroidConnectionWiFiFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.activity_droid_connection_wifi, container, false)
-        ipEditText = view.findViewById(R.id.address)
-        portEditText = view.findViewById(R.id.port)
-        connectButton = view.findViewById(R.id.connection)
+        val viewToInflate = inflater.inflate(R.layout.activity_droid_connection_wifi, container, false)
+        ipEditText = viewToInflate.findViewById(R.id.address)
+        portEditText = viewToInflate.findViewById(R.id.port)
+        connectButton = viewToInflate.findViewById(R.id.connection)
         connectButton.setOnClickListener { view ->
             connectToDroid()
         }
@@ -97,7 +97,7 @@ class DroidConnectionWiFiFragment : Fragment() {
         portEditText.addTextChangedListener(portWatcher)
         ipEditText.addTextChangedListener(addressWatcher)
         droidSettingsViewModel.connectionType = ConnectionType.WIFI
-        return view
+        return viewToInflate
     }
 
     companion object {

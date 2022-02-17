@@ -59,7 +59,7 @@ class DroidSettingsFragment : Fragment() {
             }
 
             override fun onTextChanged(sequence: CharSequence?, start: Int, before: Int, count: Int) {
-                droidSettingsViewModel.maxPower =sequence.toString()
+                droidSettingsViewModel.setMaximumPower(sequence.toString())
             }
 
             override fun afterTextChanged(sequence: Editable?) {
@@ -73,7 +73,7 @@ class DroidSettingsFragment : Fragment() {
             }
 
             override fun onTextChanged(sequence: CharSequence?, start: Int, before: Int, count: Int) {
-                droidSettingsViewModel.minPower =sequence.toString()
+                droidSettingsViewModel.setMinimumPower(sequence.toString())
             }
 
             override fun afterTextChanged(sequence: Editable?) {
@@ -124,19 +124,19 @@ class DroidSettingsFragment : Fragment() {
         outputStreamWriter.write(String.format("V%s#\n",droidSettingsViewModel.maxPower))
         outputStreamWriter.flush()
         var status : String = inputStreamReader.readLine()
-        Log.d(TAG,status)
+        Log.d(TAG, "V=$status")
         outputStreamWriter.write(String.format("v%s#\n",droidSettingsViewModel.minPower))
         outputStreamWriter.flush()
         status = inputStreamReader.readLine()
-        Log.d(TAG,status)
+        Log.d(TAG,"v=$status")
         outputStreamWriter.write("d"+droidSettingsViewModel.lowPowerDistance + "#\n")
         outputStreamWriter.flush()
         status = inputStreamReader.readLine()
-        Log.d(TAG,status)
+        Log.d(TAG,"d=$status")
         outputStreamWriter.write("s"+droidSettingsViewModel.stopDistance+"#\n")
         outputStreamWriter.flush()
         status = inputStreamReader.readLine()
-        Log.d(TAG,status)
+        Log.d(TAG,"s=$status")
     }
 
     private fun sendDataToDroid() = runBlocking  {

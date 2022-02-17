@@ -8,17 +8,14 @@
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:id="@+id/movement_control"
+        android:layout_width="300dp"
+        android:layout_height="210dp"
         android:layout_marginBottom="24dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.806"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toEndOf="@id/power_control">
 
         <Button
             android:id="@+id/forward"
@@ -65,9 +62,9 @@
             android:id="@+id/left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:text="@string/droid_left"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -81,9 +78,9 @@
             android:id="@+id/right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:text="@string/droid_right"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -94,6 +91,38 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+        android:id="@+id/power_control"
+        android:layout_width="70dp"
+        android:layout_height="210dp"
+        android:layout_marginBottom="24dp"
+        android:layout_centerVertical="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/movement_control"
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical">
+        <FrameLayout
+            android:id="@+id/powerBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="162dp"
+            android:orientation="vertical">
+            <SeekBar
+                android:id="@+id/powerBar"
+                android:layout_width="162dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:rotation="270" />
+        </FrameLayout>
 
-
+        <EditText
+            android:id="@+id/currentPower"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="5"
+            android:inputType="none"
+            android:minHeight="48dp"
+            android:text="@string/droid_default_max_power"
+            android:textSize="18sp" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
