@@ -32,8 +32,10 @@ class DroidSettingsViewModel : ViewModel()  {
     var maxPower : String
 
     fun setMaximumPower(value : String) {
+        if (value.isEmpty())
+            return
         maxPower = value
-        if (currentPower > maxPower) {
+        if (currentPower.toInt() > maxPower.toInt()) {
             currentPower = maxPower
             isPowerChanged = true;
         }
@@ -41,8 +43,10 @@ class DroidSettingsViewModel : ViewModel()  {
     var minPower : String
 
     fun setMinimumPower(value : String) {
+        if (value.isEmpty())
+            return
         minPower = value;
-        if (currentPower < minPower) {
+        if (currentPower.toInt() < minPower.toInt()) {
             currentPower = minPower
             isPowerChanged = true
         }
