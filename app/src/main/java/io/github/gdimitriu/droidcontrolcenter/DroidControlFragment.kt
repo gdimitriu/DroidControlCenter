@@ -200,6 +200,7 @@ class DroidControlFragment : Fragment() {
         outputStreamWriter.flush()
         var status : String = inputStreamReader.readLine()
         Log.d(TAG,"c=$status")
+        isCurrentPowerChanged = false
     }
     companion object {
         fun newInstance(): DroidControlFragment {
