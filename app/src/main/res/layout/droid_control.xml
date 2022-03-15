@@ -7,6 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <org.videolan.libvlc.util.VLCVideoLayout
+        android:id="@+id/droid_videoLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="250dp"
+        android:fitsSystemWindows="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/movement_control"
         android:layout_width="300dp"
@@ -95,17 +107,19 @@
         android:id="@+id/power_control"
         android:layout_width="70dp"
         android:layout_height="210dp"
-        android:layout_marginBottom="24dp"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="24dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/movement_control"
-        app:layout_constraintStart_toStartOf="parent"
-        android:orientation="vertical">
+        app:layout_constraintStart_toStartOf="parent">
+
         <FrameLayout
             android:id="@+id/powerBarLayout"
             android:layout_width="match_parent"
             android:layout_height="162dp"
             android:orientation="vertical">
+
             <SeekBar
                 android:id="@+id/powerBar"
                 android:layout_width="162dp"

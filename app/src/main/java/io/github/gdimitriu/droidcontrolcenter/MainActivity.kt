@@ -46,9 +46,16 @@ class MainActivity : AppCompatActivity() {
                     .addToBackStack(null).commit()
                 true
             }
-            R.id.droid_settings -> {
+            R.id.droid_settings_move -> {
                 val fragment =
                     DroidSettingsFragment.newInstance()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null).commit()
+                true
+            }
+            R.id.droid_settings_camera -> {
+                val fragment =
+                    DroidSettingsCameraFragment.newInstance()
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment)
                     .addToBackStack(null).commit()
                 true

@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <org.videolan.libvlc.util.VLCVideoLayout
+        android:id="@+id/droid_videoLayout"
+        android:layout_width="640dp"
+        android:layout_height="480dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="300dp"
+        android:fitsSystemWindows="false"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/movement_control"
+        app:layout_constraintStart_toEndOf="@+id/power_control"
+        app:layout_constraintTop_toTopOf="parent" />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/movement_control"
         android:layout_width="wrap_content"

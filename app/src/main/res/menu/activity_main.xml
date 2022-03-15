@@ -18,9 +18,22 @@
             app:showAsAction="ifRoom|withText" />
         </menu>
     </item>
-    <item
-        android:id="@+id/droid_settings"
-        android:icon="@drawable/ic_launcher_foreground"
-        android:title="@string/droid_settings"
-        app:showAsAction="ifRoom|withText" />
+       <item
+        android:id="@+id/droid_settings_menu"
+        android:title="@string/droid_settings_menu"
+        app:showAsAction="ifRoom|withText">
+        <menu>
+           <item
+               android:id="@+id/droid_settings_move"
+               android:icon="@drawable/ic_launcher_foreground"
+               android:title="@string/droid_settings_move"
+               app:showAsAction="ifRoom|withText" />
+            <item
+                android:id="@+id/droid_settings_camera"
+                android:icon="@drawable/ic_launcher_foreground"
+                android:title="@string/droid_settings_camera"
+                app:showAsAction="ifRoom|withText" />
+        </menu>
+    </item>
+
 </menu>

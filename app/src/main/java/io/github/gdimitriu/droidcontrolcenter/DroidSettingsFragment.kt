@@ -149,8 +149,8 @@ class DroidSettingsFragment : Fragment() {
             job.join()
         } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
             val job = GlobalScope.launch {
-                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.getInputStream()))
-                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.inputStream))
+                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.outputStream)
                 sendDataToDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()
@@ -190,8 +190,8 @@ class DroidSettingsFragment : Fragment() {
             job.join()
         } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
             val job = GlobalScope.launch {
-                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.getInputStream()))
-                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.inputStream))
+                val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.outputStream)
                 getDataFromDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()

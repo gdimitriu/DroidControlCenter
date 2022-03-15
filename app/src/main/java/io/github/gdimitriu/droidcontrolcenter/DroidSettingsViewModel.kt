@@ -56,6 +56,11 @@ class DroidSettingsViewModel : ViewModel()  {
     var lowPowerDistance : String
     var currentPower : String
     var isPowerChanged : Boolean
+    var wifiAddress : String
+    var cameraPort : String
+    var cameraStatus : String
+    var cameraProtocol : String
+    var cameraCodec : String
     init {
         Log.d(TAG, "Initialized the model view")
         ipAddress  = ""
@@ -70,6 +75,11 @@ class DroidSettingsViewModel : ViewModel()  {
         lowPowerDistance = ""
         bleSocket = null
         isPowerChanged = false
+        wifiAddress = ""
+        cameraPort = ""
+        cameraProtocol = "tcp"
+        cameraStatus = "off"
+        cameraCodec = "mjpeg"
     }
     override fun onCleared() {
         Log.d(TAG,"Clearing and close the socket.")
