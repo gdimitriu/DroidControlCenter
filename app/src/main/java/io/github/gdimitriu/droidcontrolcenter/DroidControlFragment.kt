@@ -3,6 +3,7 @@ package io.github.gdimitriu.droidcontrolcenter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.bluetooth.BluetoothSocket
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -11,15 +12,21 @@ import android.widget.EditText
 import android.widget.SeekBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import org.videolan.libvlc.LibVLC
+import org.videolan.libvlc.Media
+import org.videolan.libvlc.MediaPlayer
+import org.videolan.libvlc.util.VLCVideoLayout
 import java.io.BufferedReader
+import java.io.IOException
 import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Socket
+import java.util.ArrayList
 
 private const val TAG = "DroidControl"
+private const val USE_TEXTURE_VIEW = false
+private const val ENABLE_SUBTITLES = true
 
 @DelicateCoroutinesApi
 class DroidControlFragment : Fragment() {
@@ -33,6 +40,11 @@ class DroidControlFragment : Fragment() {
     private var isCurrentPowerChanged : Boolean = false
 
     private val droidSettingsViewModel: DroidSettingsViewModel by activityViewModels()
+
+    private var mLibVLC: LibVLC? = null
+    private var mMediaPlayer: MediaPlayer? = null
+    private lateinit var videoLayout : VLCVideoLayout
+    private var isStart : Boolean = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -148,12 +160,73 @@ class DroidControlFragment : Fragment() {
             if (sendOneWayCommandToDroid("b#\n"))
                 Log.d(TAG, "Full stop")
         }
+        //camera operations
+        mLibVLC = LibVLC(context, ArrayList<String>().apply {
+            add("--no-drop-late-frames")
+            add("--no-skip-frames")
+            add("--rtsp-tcp")
+            add("-vvv")
+        })
+        videoLayout = view.findViewById(R.id.droid_videoLayout)
+        videoLayout.setOnClickListener {
+            if (isStart) {
+                stopReceivingStreamFromCamera()
+            } else {
+                startReceivingStreamFromCamera();
+            }
+        }
+        if (droidSettingsViewModel.isCameraStreaming)
+            startReceivingStreamFromCamera()
         return view;
     }
 
-    private fun sendOneWayCommandToDroid(message : String) : Boolean {
+    private fun stopReceivingStreamFromCamera() {
+        Log.d(TAG,"Streaming camera is stopping")
+        mMediaPlayer?.stop()
+        mMediaPlayer?.detachViews()
+        mMediaPlayer?.release()
+        sendOneWayCommandToDroid("t#\n")
+        droidSettingsViewModel.isCameraStreaming = false
+        isStart = false
+        Log.d(TAG,"Streaming camera is stopped")
+    }
+
+    private fun startReceivingStreamFromCamera() {
+        if (droidSettingsViewModel.cameraStatus.compareTo("off") == 0) {
+            Log.i(TAG,"Stream Camera is disabled")
+            return
+        }
+        Log.d(TAG,"Streaming camera is starting")
+        if (!sendOneWayCommandToDroid("T#\n",true))
+            return
+        mMediaPlayer = MediaPlayer(mLibVLC)
+        mMediaPlayer?.attachViews(videoLayout, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW)
+        try {
+            val httpUrl = "${droidSettingsViewModel.cameraProtocol}/${droidSettingsViewModel.cameraCodec}://${droidSettingsViewModel.wifiAddress}:${droidSettingsViewModel.cameraPort}"
+            val uri = Uri.parse(httpUrl)
+
+            Media(mLibVLC, uri).apply {
+                setHWDecoderEnabled(true, false);
+                addOption(":network-caching=150");
+                addOption(":clock-jitter=0");
+                addOption(":clock-synchro=0");
+                mMediaPlayer?.media = this
+
+            }.release()
+
+            mMediaPlayer?.play()
+            droidSettingsViewModel.isCameraStreaming = true
+            isStart = true
+            Log.d(TAG,"Streaming camera is started")
+        } catch (e: IOException) {
+            Log.e(TAG, e.localizedMessage)
+            e.printStackTrace()
+        }
+    }
+
+    private fun sendOneWayCommandToDroid(message : String, hasAck : Boolean = false) : Boolean = runBlocking {
         if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
-            GlobalScope.launch {
+            var job = GlobalScope.launch {
                 val outputStreamWriter =
                     OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
                 val inputStreamReader =
@@ -161,10 +234,15 @@ class DroidControlFragment : Fragment() {
                 sendCurrentPowerToDroid(inputStreamReader,outputStreamWriter)
                 outputStreamWriter.write(message)
                 outputStreamWriter.flush()
+                if (hasAck) {
+                    val status = inputStreamReader.readLine()
+                    Log.d(TAG,"s=$status")
+                }
             }
-            return true
+            job.join()
+            return@runBlocking true
         } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
-            GlobalScope.launch {
+            var job = GlobalScope.launch {
                 val outputStreamWriter =
                     OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
                 val inputStreamReader =
@@ -172,8 +250,13 @@ class DroidControlFragment : Fragment() {
                 sendCurrentPowerToDroid(inputStreamReader,outputStreamWriter)
                 outputStreamWriter.write(message)
                 outputStreamWriter.flush()
+                if (hasAck) {
+                    val status = inputStreamReader.readLine()
+                    Log.d(TAG,"s=$status")
+                }
             }
-            return true
+            job.join()
+            return@runBlocking true
         } else if (droidSettingsViewModel.connectionType == ConnectionType.NONE) {
             val builder: AlertDialog.Builder? = activity?.let {
                 AlertDialog.Builder(it)
@@ -182,7 +265,7 @@ class DroidControlFragment : Fragment() {
             val dialog: AlertDialog? = builder?.create()
             dialog?.show()
         }
-        return false
+        return@runBlocking false
     }
 
     @Synchronized
@@ -202,10 +285,23 @@ class DroidControlFragment : Fragment() {
         Log.d(TAG,"c=$status")
         isCurrentPowerChanged = false
     }
+
     companion object {
         fun newInstance(): DroidControlFragment {
             return DroidControlFragment()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mMediaPlayer?.stop()
+        mMediaPlayer?.detachViews()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        mMediaPlayer?.release()
+        mLibVLC?.release()
+        sendOneWayCommandToDroid("t#\n")
     }
 
     private fun validateWiFiSocketConnection(socket: Socket?): Boolean {

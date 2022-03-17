@@ -24,7 +24,7 @@ private const val DROID_CAMERA_PROTOCOL = "DROID_CAMERA_PROTOCOL"
 private const val DROID_CAMERA_PORT = "DROID_CAMERA_PORT"
 private const val DROID_CAMERA_CODEC = "DROID_CAMERA_CODEC"
 
-private const val TAG = "DroidControl"
+private const val TAG = "DroidSettingsCamera"
 class DroidSettingsCameraFragment : Fragment() {
 
     private lateinit var wifiIPAddressText : TextView
@@ -70,6 +70,17 @@ class DroidSettingsCameraFragment : Fragment() {
         var values = value.split("#")
         if (values.isEmpty())
             return
+        if (values.size == 1) {
+            if (values[0] == "unsupported") {
+                Log.i(TAG,"")
+                droidSettingsViewModel.wifiAddress = "na"
+                droidSettingsViewModel.cameraStatus = "off"
+                droidSettingsViewModel.cameraProtocol = "na"
+                droidSettingsViewModel.cameraPort = "na"
+                droidSettingsViewModel.cameraCodec = "na"
+                return
+            }
+        }
         for (info in values) {
             if (info.startsWith("wifi:")) {
                 value = info.removePrefix("wifi:")

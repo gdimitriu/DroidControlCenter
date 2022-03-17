@@ -3,6 +3,8 @@ package io.github.gdimitriu.droidcontrolcenter
 import android.bluetooth.BluetoothSocket
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import org.videolan.libvlc.LibVLC
+import org.videolan.libvlc.MediaPlayer
 import java.net.Socket
 
 private const val TAG = "DroidSettingsViewModel"
@@ -56,11 +58,13 @@ class DroidSettingsViewModel : ViewModel()  {
     var lowPowerDistance : String
     var currentPower : String
     var isPowerChanged : Boolean
+    //stream camera
     var wifiAddress : String
     var cameraPort : String
     var cameraStatus : String
     var cameraProtocol : String
     var cameraCodec : String
+    var isCameraStreaming : Boolean
     init {
         Log.d(TAG, "Initialized the model view")
         ipAddress  = ""
@@ -80,6 +84,7 @@ class DroidSettingsViewModel : ViewModel()  {
         cameraProtocol = "tcp"
         cameraStatus = "off"
         cameraCodec = "mjpeg"
+        isCameraStreaming = false
     }
     override fun onCleared() {
         Log.d(TAG,"Clearing and close the socket.")
