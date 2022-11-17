@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.bluetooth.BluetoothSocket
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -61,7 +62,9 @@ class DroidControlFragment : Fragment() {
         currentPower = view.findViewById(R.id.currentPower)
         currentPower.setText(droidSettingsViewModel.maxPower)
         powerBar = view.findViewById(R.id.powerBar)
-        powerBar.min = droidSettingsViewModel.minPower.toInt()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            powerBar.min = droidSettingsViewModel.minPower.toInt()
+        }
         powerBar.max = droidSettingsViewModel.maxPower.toInt()
         powerBar.progress = droidSettingsViewModel.maxPower.toInt()
         powerBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -69,7 +72,9 @@ class DroidControlFragment : Fragment() {
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                powerBar.min = droidSettingsViewModel.minPower.toInt()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    powerBar.min = droidSettingsViewModel.minPower.toInt()
+                }
                 powerBar.max = droidSettingsViewModel.maxPower.toInt()
                 powerBar.progress = droidSettingsViewModel.currentPower.toInt()
             }
@@ -273,7 +278,9 @@ class DroidControlFragment : Fragment() {
         if ((!isCurrentPowerChanged) && (!droidSettingsViewModel.isPowerChanged))
             return
         if (droidSettingsViewModel.isPowerChanged) {
-            powerBar.min = droidSettingsViewModel.minPower.toInt()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                powerBar.min = droidSettingsViewModel.minPower.toInt()
+            }
             powerBar.max = droidSettingsViewModel.maxPower.toInt()
             powerBar.progress = droidSettingsViewModel.currentPower.toInt()
             droidSettingsViewModel.isPowerChanged = false
