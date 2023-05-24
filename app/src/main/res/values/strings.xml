@@ -9,12 +9,13 @@
     <string name="droid_port_title">Droid Port</string>
     <string name="droid_address_title">Droid Address</string>
     <string name="droid_default_port">8080</string>
-    <string name="droid_connection_wifi">Droid Connection WiFi</string>
-    <string name="droid_connection_ble">Droid Connection Ble</string>
     <string name="droid_ble_name">Name</string>
     <string name="droid_ble_mac">MAC</string>
     <string name="droid_connect">Connect</string>
     <string name="droid_settings_menu">Droid Settings</string>
+    <string name="droid_connection_menu">Connection</string>
+    <string name="droid_connection_wifi">Droid Connection WiFi</string>
+    <string name="droid_connection_ble">Droid Connection Ble</string>
     <string name="droid_settings_move">Droid Settings Move</string>
     <string name="droid_max_power_title">Droid Maximum Power</string>
     <string name="droid_default_max_power">4000</string>
@@ -25,10 +26,10 @@
     <string name="droid_low_power_distance_title">Droid Low Power Distance</string>
     <string name="droid_default_low_power_distance">250</string>
     <string name="droid_send_data">Send Settings</string>
-    <string name="droid_connection_menu">Connection</string>
     <string name="droid_settings_camera">Droid Settings Camera</string>
     <string name="droid_wifi_ip_title">Droid wifi IP address</string>
     <string name="droid_wifi_ip_address_default">192.168.1.1</string>
+    <!-- camera operations -->
     <string name="droid_camera_status_title">Stream Camera Status</string>
     <string name="droid_camera_status_default">off</string>
     <string name="droid_camera_protocol_title">Stream Camera protocol</string>
@@ -37,4 +38,17 @@
     <string name="droid_camera_port_default">8180</string>
     <string name="droid_camera_codec_title">Stream Camera codec</string>
     <string name="droid_camera_codec_default">mjpeg</string>
+    <!-- navigation operations -->
+    <string name="droid_navigation_menu">Navigation</string>
+    <string name="droid_navigation_file_load">Load File</string>
+    <string name="droid_navigation_file_save">Save File</string>
+    <string name="droid_navigation_file_edit">Edit File</string>
+    <string name="droid_navigation_front">Front</string>
+    <string name="droid_navigation_back">Back</string>
+    <string name="droid_navigation_power">Power</string>
+    <string name="droid_navigation_upload">Upload</string>
+    <string name="droid_navigation_update">Update</string>
+    <string name="droid_navigation_run_label">Run on Droid</string>
+    <string name="droid_navigation_run_direct">Direct</string>
+    <string name="droid_navigation_run_reverse">Reverse</string>
 </resources>

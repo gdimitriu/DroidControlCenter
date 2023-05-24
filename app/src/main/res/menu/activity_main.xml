@@ -2,38 +2,64 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/connection_menu"
-        android:title="@string/droid_connection_menu"
-        app:showAsAction="ifRoom|withText">
-        <menu>
-        <item
-            android:id="@+id/droid_connection_wifi"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:title="@string/droid_connection_wifi"
-            app:showAsAction="ifRoom|withText" />
-        <item
-            android:id="@+id/droid_connection_ble"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:title="@string/droid_connection_ble"
-            app:showAsAction="ifRoom|withText" />
-        </menu>
-    </item>
-       <item
-        android:id="@+id/droid_settings_menu"
+        android:id="@+id/connection_settings_menu"
         android:title="@string/droid_settings_menu"
         app:showAsAction="ifRoom|withText">
-        <menu>
-           <item
-               android:id="@+id/droid_settings_move"
-               android:icon="@drawable/ic_launcher_foreground"
-               android:title="@string/droid_settings_move"
-               app:showAsAction="ifRoom|withText" />
-            <item
-                android:id="@+id/droid_settings_camera"
-                android:icon="@drawable/ic_launcher_foreground"
-                android:title="@string/droid_settings_camera"
-                app:showAsAction="ifRoom|withText" />
-        </menu>
+        <item
+            android:id="@+id/droid_navigation_menu"
+            android:title="@string/droid_navigation_menu"
+            app:showAsAction="ifRoom|withText">
+            <menu>
+                <item
+                    android:id="@+id/droid_navigation_file_load"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_navigation_file_load"
+                    app:showAsAction="ifRoom|withText" />
+                <item
+                    android:id="@+id/droid_navigation_file_save"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_navigation_file_save"
+                    app:showAsAction="ifRoom|withText" />
+                <item
+                    android:id="@+id/droid_navigation_file_edit"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_navigation_file_edit"
+                    app:showAsAction="ifRoom|withText" />
+            </menu>
+        </item>
+        <item
+            android:id="@+id/connection_menu"
+            android:title="@string/droid_connection_menu"
+            app:showAsAction="ifRoom|withText">
+            <menu>
+                <item
+                    android:id="@+id/droid_connection_wifi"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_connection_wifi"
+                    app:showAsAction="ifRoom|withText" />
+                <item
+                    android:id="@+id/droid_connection_ble"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_connection_ble"
+                    app:showAsAction="ifRoom|withText" />
+            </menu>
+        </item>
+        <item
+            android:id="@+id/droid_settings_menu"
+            android:title="@string/droid_settings_menu"
+            app:showAsAction="ifRoom|withText">
+            <menu>
+                <item
+                    android:id="@+id/droid_settings_move"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_settings_move"
+                    app:showAsAction="ifRoom|withText" />
+                <item
+                    android:id="@+id/droid_settings_camera"
+                    android:icon="@drawable/ic_launcher_foreground"
+                    android:title="@string/droid_settings_camera"
+                    app:showAsAction="ifRoom|withText" />
+            </menu>
+        </item>
     </item>
-
 </menu>

@@ -91,7 +91,7 @@ class DroidControlFragment : Fragment() {
                 }
             }
         })
-        forwardButton.setOnTouchListener { view, motionEvent ->
+        forwardButton.setOnTouchListener { _, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 if(sendOneWayCommandToDroid("M1,0#\n")) {
@@ -109,7 +109,7 @@ class DroidControlFragment : Fragment() {
             return@setOnTouchListener false
         }
 
-        backwardButton.setOnTouchListener { view, motionEvent ->
+        backwardButton.setOnTouchListener { _, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 if(sendOneWayCommandToDroid("M-1,0#\n")) {
@@ -126,7 +126,7 @@ class DroidControlFragment : Fragment() {
             }
             return@setOnTouchListener false
         }
-        leftButton.setOnTouchListener { view, motionEvent ->
+        leftButton.setOnTouchListener { _, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 if(sendOneWayCommandToDroid("M0,-1#\n")) {
@@ -144,7 +144,7 @@ class DroidControlFragment : Fragment() {
             return@setOnTouchListener false
         }
 
-        rightButton.setOnTouchListener { view, motionEvent ->
+        rightButton.setOnTouchListener { _, motionEvent ->
             val event = motionEvent as MotionEvent
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
                 if(sendOneWayCommandToDroid("M0,1#\n")) {

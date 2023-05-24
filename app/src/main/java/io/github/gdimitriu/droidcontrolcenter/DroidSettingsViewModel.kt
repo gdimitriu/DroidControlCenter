@@ -65,6 +65,15 @@ class DroidSettingsViewModel : ViewModel()  {
     var cameraProtocol : String
     var cameraCodec : String
     var isCameraStreaming : Boolean
+    //navigation
+    var commands : ArrayList<DataModel>
+    var navigationPower : String
+    var isNavigationPowerChanged : Boolean
+    var navigationDistance : String
+    var isNavigationDistanceChanged : Boolean
+    var navigationRotate : String
+    var isNavigationRotateChanged : Boolean
+    var listSelectedPosition : Int
     init {
         Log.d(TAG, "Initialized the model view")
         ipAddress  = ""
@@ -85,11 +94,20 @@ class DroidSettingsViewModel : ViewModel()  {
         cameraStatus = "off"
         cameraCodec = "mjpeg"
         isCameraStreaming = false
+        commands = ArrayList()
+        navigationPower = ""
+        isNavigationPowerChanged = false
+        navigationDistance = "0"
+        isNavigationDistanceChanged = false
+        navigationRotate = "0"
+        isNavigationRotateChanged = false
+        listSelectedPosition = -1
     }
     override fun onCleared() {
         Log.d(TAG,"Clearing and close the socket.")
         super.onCleared()
         socket?.close()
         bleSocket?.close()
+        commands.clear()
     }
 }
