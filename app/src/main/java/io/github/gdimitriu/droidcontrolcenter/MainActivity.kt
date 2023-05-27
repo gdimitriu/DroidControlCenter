@@ -54,9 +54,9 @@ class MainActivity : AppCompatActivity() {
                 // Perform operations on the document using its URI.
                 try {
                     val fileOutPutStream = contentResolver.openOutputStream(uri)
-                    for (dataModel: DataModel in droidSettingViewModel.commands) {
-                        if (dataModel.command != null) {
-                            fileOutPutStream?.write(dataModel.command!!.toByteArray())
+                    for (dataModel: String in droidSettingViewModel.commands) {
+                        if (dataModel != null) {
+                            fileOutPutStream?.write(dataModel.toByteArray())
                             fileOutPutStream?.write("\n".toByteArray())
                         }
                     }
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     var text: String? = bufferedReader.readLine()
                     while (text != null) {
                         if (text != "")
-                            droidSettingViewModel.commands.add(DataModel(text + "\n", false))
+                            droidSettingViewModel.commands.add(text + "\n")
                         text = bufferedReader.readLine()
                     }
                     fileInputStream?.close()
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                     val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
                     var text: String? = bufferedReader.readLine()
                     while (text != null) {
-                        droidSettingViewModel.commands.add(DataModel(text + "\n",false))
+                        droidSettingViewModel.commands.add(text + "\n")
                         text = bufferedReader.readLine()
                     }
                     fileInputStream?.close()

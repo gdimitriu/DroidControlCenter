@@ -66,7 +66,7 @@ class DroidSettingsViewModel : ViewModel()  {
     var cameraCodec : String
     var isCameraStreaming : Boolean
     //navigation
-    var commands : ArrayList<DataModel>
+    var commands : ArrayList<String>
     var navigationPower : String
     var isNavigationPowerChanged : Boolean
     var navigationDistance : String

@@ -7,6 +7,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
@@ -16,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 
 private const val TAG = "DroidNavigation"
-class DroidNavigationFragment : Fragment() {
+class DroidNavigationFragment : Fragment(), OnItemClickListener {
     private lateinit var distanceText: EditText
     private lateinit var rotateText: EditText
     private lateinit var linearGroup: RadioGroup
@@ -29,7 +33,7 @@ class DroidNavigationFragment : Fragment() {
     private lateinit var navigationCommandList : ListView
     private lateinit var runDirectButton : Button
     private lateinit var runReverseButton : Button
-    private lateinit var navigationCommandListAdapter: CustomAdapter
+    private lateinit var navigationCommandListAdapter: ArrayAdapter<String>
 
     private val droidSettingsViewModel: DroidSettingsViewModel by activityViewModels()
 
@@ -123,16 +127,19 @@ class DroidNavigationFragment : Fragment() {
         runReverseButton = view.findViewById(R.id.droid_navigation_run_reverse)
 
         navigationCommandList = view.findViewById(R.id.run_on_droid_list)
-        navigationCommandListAdapter = CustomAdapter(
-            droidSettingsViewModel.commands,
-            requireActivity().applicationContext)
+        navigationCommandListAdapter = ArrayAdapter(requireActivity().applicationContext,
+            android.R.layout.simple_list_item_single_choice,
+            droidSettingsViewModel.commands
+            )
         navigationCommandList.adapter = navigationCommandListAdapter
         navigationCommandList.choiceMode = ListView.CHOICE_MODE_SINGLE
+        navigationCommandList.onItemClickListener = this
         return view
     }
 
-    private fun addCommand(type: Boolean) {
+    private fun createCommand() : String {
         var command: String
+
         if (droidSettingsViewModel.isNavigationDistanceChanged) {
             if ( R.id.navigation_forward == linearGroup.checkedRadioButtonId) {
                 command = "m" + droidSettingsViewModel.navigationDistance + ",0#"
@@ -153,12 +160,17 @@ class DroidNavigationFragment : Fragment() {
         } else {
             command = ""
         }
+        return command
+    }
+
+    private fun addCommand(type: Boolean) {
+        val command = createCommand()
         if (!command.isNullOrEmpty()) {
             if (type) {
-                droidSettingsViewModel.commands.add(0,DataModel(command, false))
+                droidSettingsViewModel.commands.add(0,command)
                 Log.d(TAG, "added first $command")
             } else {
-                droidSettingsViewModel.commands.add(DataModel(command, false))
+                droidSettingsViewModel.commands.add(command)
                 Log.d(TAG, "added last $command")
             }
             navigationCommandListAdapter.notifyDataSetChanged()
@@ -171,19 +183,39 @@ class DroidNavigationFragment : Fragment() {
         }
     }
 
-    private fun updateData(command : String?) {
-
-        Log.d(TAG, "Position selected $command")
+    private fun updateGetData() {
+        Log.d(TAG, navigationCommandList.checkedItemPosition.toString())
+        val command = createCommand()
+        droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition] = command
+        droidSettingsViewModel.listSelectedPosition = -1
+        navigationCommandList.clearChoices()
+        navigationCommandListAdapter.notifyDataSetChanged()
     }
 
-    private fun updateGetData() {
-        val position = navigationCommandList.selectedItemPosition
+    override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
         droidSettingsViewModel.listSelectedPosition = position
-        val dataModel : DataModel = droidSettingsViewModel.commands!![position] as DataModel
-        val checked = !dataModel.checked
-        dataModel.checked = !dataModel.checked
-        navigationCommandListAdapter.notifyDataSetChanged()
-        updateData(dataModel.command)
+        val command : String = droidSettingsViewModel.commands[position];
+        if (command.startsWith("c")) {
+            powerText.setText(command.subSequence(1, command.length - 1))
+        } else if ( command.startsWith("m")) {
+            val comaIndex = command.indexOf(",")
+            val distance = command.substring(1, comaIndex)
+            val rotate = command.substring(comaIndex + 1, command.length - 1)
+            if ( distance.toInt() < 0 ) {
+                linearGroup.check(R.id.navigation_backward)
+                distanceText.setText(distance.substring(1))
+            } else {
+                linearGroup.check(R.id.navigation_forward)
+                distanceText.setText(distance)
+            }
+            if ( rotate.toInt() < 0 ) {
+                rotateGroup.check(R.id.navigation_left)
+                rotateText.setText(rotate.substring(1))
+            } else {
+                rotateGroup.check(R.id.navigation_right)
+                rotateText.setText(rotate)
+            }
+        }
     }
 }
 
