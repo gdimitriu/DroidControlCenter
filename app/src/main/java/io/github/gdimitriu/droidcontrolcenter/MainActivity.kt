@@ -74,8 +74,8 @@ class MainActivity : AppCompatActivity() {
                 // Perform operations on the document using its URI.
                 try {
                     val fileInputStream = contentResolver.openInputStream(uri)
-                    var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)
-                    val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
+                    var inputStreamReader = InputStreamReader(fileInputStream)
+                    val bufferedReader = BufferedReader(inputStreamReader)
                     var text: String? = bufferedReader.readLine()
                     while (text != null) {
                         if (text != "")
@@ -95,8 +95,8 @@ class MainActivity : AppCompatActivity() {
                 // Perform operations on the document using its URI.
                 try {
                     val fileInputStream = contentResolver.openInputStream(uri)
-                    var inputStreamReader: InputStreamReader = InputStreamReader(fileInputStream)
-                    val bufferedReader: BufferedReader = BufferedReader(inputStreamReader)
+                    var inputStreamReader = InputStreamReader(fileInputStream)
+                    val bufferedReader = BufferedReader(inputStreamReader)
                     var text: String? = bufferedReader.readLine()
                     while (text != null) {
                         droidSettingViewModel.commands.add(text + "\n")

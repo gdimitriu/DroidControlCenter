@@ -140,14 +140,14 @@ class DroidSettingsFragment : Fragment() {
     }
 
     private fun sendDataToDroid() = runBlocking  {
-        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && CommUtils.validateWiFiSocketConnection(droidSettingsViewModel.socket, activity)) {
             val job = GlobalScope.launch {
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
                 sendDataToDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()
-        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && CommUtils.validateBleSocketConnection(droidSettingsViewModel.bleSocket, activity)) {
             val job = GlobalScope.launch {
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.inputStream))
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.outputStream)
@@ -181,14 +181,14 @@ class DroidSettingsFragment : Fragment() {
     }
 
     private fun getDataFromDroid()  = runBlocking {
-        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && CommUtils.validateWiFiSocketConnection(droidSettingsViewModel.socket, activity)) {
             val job = GlobalScope.launch {
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
                 getDataFromDroid(inputStreamReader, outputStreamWriter)
             }
             job.join()
-        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && CommUtils.validateBleSocketConnection(droidSettingsViewModel.bleSocket, activity)) {
             val job = GlobalScope.launch {
                 val inputStreamReader = BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.inputStream))
                 val outputStreamWriter = OutputStreamWriter(droidSettingsViewModel.bleSocket?.outputStream)
@@ -196,30 +196,6 @@ class DroidSettingsFragment : Fragment() {
             }
             job.join()
         }
-    }
-    private fun validateWiFiSocketConnection(socket: Socket?): Boolean {
-        if (socket == null || socket.isClosed) {
-            val builder: AlertDialog.Builder? = activity?.let {
-                AlertDialog.Builder(it)
-            }
-            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
-            val dialog: AlertDialog? = builder?.create()
-            dialog?.show()
-            return false
-        }
-        return true
-    }
-    private fun validateBleSocketConnection(socket: BluetoothSocket?): Boolean {
-        if (socket == null || !socket.isConnected) {
-            val builder: AlertDialog.Builder? = activity?.let {
-                AlertDialog.Builder(it)
-            }
-            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
-            val dialog: AlertDialog? = builder?.create()
-            dialog?.show()
-            return false
-        }
-        return true
     }
     companion object {
         fun newInstance(): DroidSettingsFragment {

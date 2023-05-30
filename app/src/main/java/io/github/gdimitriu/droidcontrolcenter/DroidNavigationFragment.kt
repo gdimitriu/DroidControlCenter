@@ -1,5 +1,6 @@
 package io.github.gdimitriu.droidcontrolcenter
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -18,6 +18,12 @@ import android.widget.RadioGroup
 import android.widget.RadioGroup.OnCheckedChangeListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 private const val TAG = "DroidNavigation"
 class DroidNavigationFragment : Fragment(), OnItemClickListener {
@@ -117,14 +123,23 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
             addCommand(false)
         }
         uploadButton = view.findViewById(R.id.navigation_upload)
+        uploadButton.setOnClickListener {
+            uploadData()
+        }
         updateButton = view.findViewById(R.id.navigation_update)
         updateButton.setOnClickListener {
             updateGetData()
         }
 
         runDirectButton = view.findViewById(R.id.droid_navigation_run_direct)
+        runDirectButton.setOnClickListener {
+            sendOneWayCommandToDroid("D#\n",true)
+        }
 
         runReverseButton = view.findViewById(R.id.droid_navigation_run_reverse)
+        runReverseButton.setOnClickListener {
+            sendOneWayCommandToDroid("B#\n", true)
+        }
 
         navigationCommandList = view.findViewById(R.id.run_on_droid_list)
         navigationCommandListAdapter = ArrayAdapter(requireActivity().applicationContext,
@@ -141,17 +156,17 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         var command: String
 
         if (droidSettingsViewModel.isNavigationDistanceChanged) {
-            if ( R.id.navigation_forward == linearGroup.checkedRadioButtonId) {
-                command = "m" + droidSettingsViewModel.navigationDistance + ",0#"
+            command = if ( R.id.navigation_forward == linearGroup.checkedRadioButtonId) {
+                "m" + droidSettingsViewModel.navigationDistance + ",0#"
             } else {
-                command = "m-" + droidSettingsViewModel.navigationDistance + ",0#"
+                "m-" + droidSettingsViewModel.navigationDistance + ",0#"
             }
             droidSettingsViewModel.isNavigationDistanceChanged = false
         } else if (droidSettingsViewModel.isNavigationRotateChanged) {
-            if ( R.id.navigation_right == rotateGroup.checkedRadioButtonId ) {
-                command = "m0," + droidSettingsViewModel.navigationRotate + "#"
+            command = if ( R.id.navigation_right == rotateGroup.checkedRadioButtonId ) {
+                "m0," + droidSettingsViewModel.navigationRotate + "#"
             } else {
-                command = "m0,-" + droidSettingsViewModel.navigationRotate + "#"
+                "m0,-" + droidSettingsViewModel.navigationRotate + "#"
             }
             droidSettingsViewModel.isNavigationRotateChanged = false
         } else if (droidSettingsViewModel.isNavigationPowerChanged) {
@@ -216,6 +231,55 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
                 rotateText.setText(rotate)
             }
         }
+    }
+
+    private fun uploadData() {
+        //send clear command
+        sendOneWayCommandToDroid("n#\n", true)
+        for ( str: String in droidSettingsViewModel.commands) {
+            sendOneWayCommandToDroid("N$str\n", true)
+        }
+    }
+    private fun sendOneWayCommandToDroid(message : String, hasAck : Boolean = false) : Boolean = runBlocking {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && CommUtils.validateWiFiSocketConnection(droidSettingsViewModel.socket, activity)) {
+            var job = GlobalScope.launch {
+                val outputStreamWriter =
+                    OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
+                val inputStreamReader =
+                    BufferedReader(InputStreamReader(droidSettingsViewModel.socket?.getInputStream()))
+                outputStreamWriter.write(message)
+                outputStreamWriter.flush()
+                if (hasAck) {
+                    val status = inputStreamReader.readLine()
+                    Log.d(TAG,"s=$status")
+                }
+            }
+            job.join()
+            return@runBlocking true
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && CommUtils.validateBleSocketConnection(droidSettingsViewModel.bleSocket, activity)) {
+            var job = GlobalScope.launch {
+                val outputStreamWriter =
+                    OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
+                val inputStreamReader =
+                    BufferedReader(InputStreamReader(droidSettingsViewModel.bleSocket?.getInputStream()))
+                outputStreamWriter.write(message)
+                outputStreamWriter.flush()
+                if (hasAck) {
+                    val status = inputStreamReader.readLine()
+                    Log.d(TAG,"s=$status")
+                }
+            }
+            job.join()
+            return@runBlocking true
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.NONE) {
+            val builder: AlertDialog.Builder? = activity?.let {
+                AlertDialog.Builder(it)
+            }
+            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
+            val dialog: AlertDialog? = builder?.create()
+            dialog?.show()
+        }
+        return@runBlocking false
     }
 }
 

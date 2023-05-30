@@ -230,7 +230,7 @@ class DroidControlFragment : Fragment() {
     }
 
     private fun sendOneWayCommandToDroid(message : String, hasAck : Boolean = false) : Boolean = runBlocking {
-        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && validateWiFiSocketConnection(droidSettingsViewModel.socket)) {
+        if (droidSettingsViewModel.connectionType == ConnectionType.WIFI && CommUtils.validateWiFiSocketConnection(droidSettingsViewModel.socket, activity)) {
             var job = GlobalScope.launch {
                 val outputStreamWriter =
                     OutputStreamWriter(droidSettingsViewModel.socket?.getOutputStream())
@@ -246,7 +246,7 @@ class DroidControlFragment : Fragment() {
             }
             job.join()
             return@runBlocking true
-        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && validateBleSocketConnection(droidSettingsViewModel.bleSocket)) {
+        } else if (droidSettingsViewModel.connectionType == ConnectionType.BLE && CommUtils.validateBleSocketConnection(droidSettingsViewModel.bleSocket, activity)) {
             var job = GlobalScope.launch {
                 val outputStreamWriter =
                     OutputStreamWriter(droidSettingsViewModel.bleSocket?.getOutputStream())
@@ -309,31 +309,5 @@ class DroidControlFragment : Fragment() {
         mMediaPlayer?.release()
         mLibVLC?.release()
         sendOneWayCommandToDroid("t#\n")
-    }
-
-    private fun validateWiFiSocketConnection(socket: Socket?): Boolean {
-        if (socket == null || socket.isClosed) {
-            val builder: AlertDialog.Builder? = activity?.let {
-                AlertDialog.Builder(it)
-            }
-            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
-            val dialog: AlertDialog? = builder?.create()
-            dialog?.show()
-            return false
-        }
-        return true
-    }
-
-    private fun validateBleSocketConnection(socket: BluetoothSocket?): Boolean {
-        if (socket == null || !socket.isConnected) {
-            val builder: AlertDialog.Builder? = activity?.let {
-                AlertDialog.Builder(it)
-            }
-            builder?.setMessage("Connect first the droid !")?.setTitle("Connection failed !")
-            val dialog: AlertDialog? = builder?.create()
-            dialog?.show()
-            return false
-        }
-        return true
     }
 }
