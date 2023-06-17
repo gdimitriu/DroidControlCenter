@@ -65,8 +65,13 @@ class DroidControlFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             powerBar.min = droidSettingsViewModel.minPower.toInt()
         }
-        powerBar.max = droidSettingsViewModel.maxPower.toInt()
-        powerBar.progress = droidSettingsViewModel.maxPower.toInt()
+        try {
+            powerBar.max = droidSettingsViewModel.maxPower.toInt()
+            powerBar.progress = droidSettingsViewModel.maxPower.toInt()
+        } catch ( e : Throwable) {
+            powerBar.max = 255
+            powerBar.progress = 255;
+        }
         powerBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, currentValue: Int, p2: Boolean) {
             }

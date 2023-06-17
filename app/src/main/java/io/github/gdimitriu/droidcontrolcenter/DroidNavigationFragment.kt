@@ -57,10 +57,6 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         rotateGroup.check(R.id.navigation_right)
         distanceText.setText("0")
         rotateText.setText("0")
-        var checkListenerDistance = OnCheckedChangeListener { _, _ -> droidSettingsViewModel.isNavigationDistanceChanged = true }
-        var checkListenerRotate = OnCheckedChangeListener { _, _ -> droidSettingsViewModel.isNavigationRotateChanged = true }
-        linearGroup.setOnCheckedChangeListener(checkListenerDistance)
-        rotateGroup.setOnCheckedChangeListener(checkListenerRotate)
         powerText = view.findViewById(R.id.navigation_power)
         powerText.setText(droidSettingsViewModel.maxPower)
         val distanceTextWatcher = object : TextWatcher {
@@ -100,6 +96,9 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
 
             override fun onTextChanged( sequence: CharSequence?, start: Int, before: Int, count: Int ) {
                 val str = sequence.toString()
+                if ( str.isEmpty() ) {
+                    return
+                }
                 if ( ( droidSettingsViewModel.maxPower.toInt() < str.toInt() ) ||
                     ( droidSettingsViewModel.minPower.toInt() > str.toInt())) {
                     return
@@ -134,11 +133,13 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         runDirectButton = view.findViewById(R.id.droid_navigation_run_direct)
         runDirectButton.setOnClickListener {
             sendOneWayCommandToDroid("D#\n",true)
+            sendOneWayCommandToDroid("C#\n",true)
         }
 
         runReverseButton = view.findViewById(R.id.droid_navigation_run_reverse)
         runReverseButton.setOnClickListener {
             sendOneWayCommandToDroid("B#\n", true)
+            sendOneWayCommandToDroid("C#\n",true)
         }
 
         navigationCommandList = view.findViewById(R.id.run_on_droid_list)
@@ -149,6 +150,13 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         navigationCommandList.adapter = navigationCommandListAdapter
         navigationCommandList.choiceMode = ListView.CHOICE_MODE_SINGLE
         navigationCommandList.onItemClickListener = this
+        var checkListenerDistance = OnCheckedChangeListener { _, _ -> droidSettingsViewModel.isNavigationDistanceChanged = true }
+        var checkListenerRotate = OnCheckedChangeListener { _, _ -> droidSettingsViewModel.isNavigationRotateChanged = true }
+        linearGroup.setOnCheckedChangeListener(checkListenerDistance)
+        rotateGroup.setOnCheckedChangeListener(checkListenerRotate)
+        droidSettingsViewModel.isNavigationDistanceChanged = false
+        droidSettingsViewModel.isNavigationRotateChanged = false
+        droidSettingsViewModel.isPowerChanged = false
         return view
     }
 
@@ -200,6 +208,9 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
 
     private fun updateGetData() {
         Log.d(TAG, navigationCommandList.checkedItemPosition.toString())
+        if ( droidSettingsViewModel.listSelectedPosition < 0 ) {
+            return
+        }
         val command = createCommand()
         droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition] = command
         droidSettingsViewModel.listSelectedPosition = -1
@@ -215,20 +226,24 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         } else if ( command.startsWith("m")) {
             val comaIndex = command.indexOf(",")
             val distance = command.substring(1, comaIndex)
-            val rotate = command.substring(comaIndex + 1, command.length - 1)
-            if ( distance.toInt() < 0 ) {
-                linearGroup.check(R.id.navigation_backward)
-                distanceText.setText(distance.substring(1))
-            } else {
-                linearGroup.check(R.id.navigation_forward)
-                distanceText.setText(distance)
+            val rotate = command.substring(comaIndex + 1, command.length - 2)
+            if (distance.isNotEmpty()) {
+                if (distance.toInt() < 0) {
+                    linearGroup.check(R.id.navigation_backward)
+                    distanceText.setText(distance.substring(1))
+                } else {
+                    linearGroup.check(R.id.navigation_forward)
+                    distanceText.setText(distance)
+                }
             }
-            if ( rotate.toInt() < 0 ) {
-                rotateGroup.check(R.id.navigation_left)
-                rotateText.setText(rotate.substring(1))
-            } else {
-                rotateGroup.check(R.id.navigation_right)
-                rotateText.setText(rotate)
+            if (rotate.isNotEmpty()) {
+                if (rotate.toInt() < 0) {
+                    rotateGroup.check(R.id.navigation_left)
+                    rotateText.setText(rotate.substring(1))
+                } else {
+                    rotateGroup.check(R.id.navigation_right)
+                    rotateText.setText(rotate)
+                }
             }
         }
     }
