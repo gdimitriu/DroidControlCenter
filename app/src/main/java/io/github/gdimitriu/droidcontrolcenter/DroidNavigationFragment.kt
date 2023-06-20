@@ -253,7 +253,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         if ( droidSettingsViewModel.listSelectedPosition < 0 ) {
             return
         }
-        if ( droidSettingsViewModel.listSelectedPosition > 1 ) {
+        if ( droidSettingsViewModel.listSelectedPosition > 0 ) {
             val tmp =  droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition - 1]
             droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition - 1 ] =
                 droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition]

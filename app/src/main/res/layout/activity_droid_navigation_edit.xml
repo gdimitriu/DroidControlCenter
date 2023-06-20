@@ -244,10 +244,10 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/navigation_view"
-        android:layout_width="180dp"
-        android:layout_height="779dp"
+        android:layout_width="162dp"
+        android:layout_height="718dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -257,8 +257,8 @@
 
         <ListView
             android:id="@+id/run_on_droid_list"
-            android:layout_width="154dp"
-            android:layout_height="769dp"
+            android:layout_width="158dp"
+            android:layout_height="694dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
