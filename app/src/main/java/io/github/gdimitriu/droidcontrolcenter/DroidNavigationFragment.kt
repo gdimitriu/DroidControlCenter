@@ -39,6 +39,9 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
     private lateinit var navigationCommandList : ListView
     private lateinit var runDirectButton : Button
     private lateinit var runReverseButton : Button
+    private lateinit var deleteButton : Button
+    private lateinit var upButton : Button
+    private lateinit var downButton : Button
     private lateinit var navigationCommandListAdapter: ArrayAdapter<String>
 
     private val droidSettingsViewModel: DroidSettingsViewModel by activityViewModels()
@@ -121,6 +124,22 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         pushBackButton.setOnClickListener {
             addCommand(false)
         }
+
+        deleteButton = view.findViewById(R.id.navigation_delete)
+        deleteButton.setOnClickListener {
+            deleteData()
+        }
+
+        upButton = view.findViewById(R.id.navigation_up)
+        upButton.setOnClickListener {
+            upData()
+        }
+
+        downButton = view.findViewById(R.id.navigation_down)
+        downButton.setOnClickListener {
+            downData()
+        }
+
         uploadButton = view.findViewById(R.id.navigation_upload)
         uploadButton.setOnClickListener {
             uploadData()
@@ -213,6 +232,49 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         }
         val command = createCommand()
         droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition] = command
+        droidSettingsViewModel.listSelectedPosition = -1
+        navigationCommandList.clearChoices()
+        navigationCommandListAdapter.notifyDataSetChanged()
+    }
+
+    private fun deleteData() {
+        Log.d(TAG, navigationCommandList.checkedItemPosition.toString())
+        if ( droidSettingsViewModel.listSelectedPosition < 0 ) {
+            return
+        }
+        droidSettingsViewModel.commands.removeAt(droidSettingsViewModel.listSelectedPosition)
+        droidSettingsViewModel.listSelectedPosition = -1
+        navigationCommandList.clearChoices()
+        navigationCommandListAdapter.notifyDataSetChanged()
+    }
+
+    private fun upData() {
+        Log.d(TAG, navigationCommandList.checkedItemPosition.toString())
+        if ( droidSettingsViewModel.listSelectedPosition < 0 ) {
+            return
+        }
+        if ( droidSettingsViewModel.listSelectedPosition > 1 ) {
+            val tmp =  droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition - 1]
+            droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition - 1 ] =
+                droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition]
+            droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition] =  tmp
+        }
+        droidSettingsViewModel.listSelectedPosition = -1
+        navigationCommandList.clearChoices()
+        navigationCommandListAdapter.notifyDataSetChanged()
+    }
+
+    private fun downData() {
+        Log.d(TAG, navigationCommandList.checkedItemPosition.toString())
+        if ( droidSettingsViewModel.listSelectedPosition < 0 ) {
+            return
+        }
+        if ( droidSettingsViewModel.listSelectedPosition < droidSettingsViewModel.commands.size ) {
+            val tmp =  droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition + 1]
+            droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition + 1 ] =
+                droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition]
+            droidSettingsViewModel.commands[droidSettingsViewModel.listSelectedPosition] =  tmp
+        }
         droidSettingsViewModel.listSelectedPosition = -1
         navigationCommandList.clearChoices()
         navigationCommandListAdapter.notifyDataSetChanged()

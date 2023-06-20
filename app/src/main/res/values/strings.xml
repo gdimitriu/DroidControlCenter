@@ -46,9 +46,12 @@
     <string name="droid_navigation_front">Front</string>
     <string name="droid_navigation_back">Back</string>
     <string name="droid_navigation_power">Power</string>
-    <string name="droid_navigation_upload">Upload</string>
     <string name="droid_navigation_update">Update</string>
+    <string name="droid_navigation_delete">Delete</string>
+    <string name="droid_navigation_up">UP</string>
+    <string name="droid_navigation_down">DOWN</string>
     <string name="droid_navigation_run_label">Run on Droid</string>
     <string name="droid_navigation_run_direct">Direct</string>
     <string name="droid_navigation_run_reverse">Reverse</string>
+    <string name="droid_navigation_upload">Upload</string>
 </resources>
