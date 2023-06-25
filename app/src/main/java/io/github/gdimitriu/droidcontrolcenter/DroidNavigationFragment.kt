@@ -173,9 +173,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         var checkListenerRotate = OnCheckedChangeListener { _, _ -> droidSettingsViewModel.isNavigationRotateChanged = true }
         linearGroup.setOnCheckedChangeListener(checkListenerDistance)
         rotateGroup.setOnCheckedChangeListener(checkListenerRotate)
-        droidSettingsViewModel.isNavigationDistanceChanged = false
-        droidSettingsViewModel.isNavigationRotateChanged = false
-        droidSettingsViewModel.isPowerChanged = false
+        cleanup()
         return view
     }
 
@@ -235,6 +233,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         droidSettingsViewModel.listSelectedPosition = -1
         navigationCommandList.clearChoices()
         navigationCommandListAdapter.notifyDataSetChanged()
+        cleanup()
     }
 
     private fun deleteData() {
@@ -246,6 +245,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         droidSettingsViewModel.listSelectedPosition = -1
         navigationCommandList.clearChoices()
         navigationCommandListAdapter.notifyDataSetChanged()
+        cleanup()
     }
 
     private fun upData() {
@@ -262,6 +262,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         droidSettingsViewModel.listSelectedPosition = -1
         navigationCommandList.clearChoices()
         navigationCommandListAdapter.notifyDataSetChanged()
+        cleanup()
     }
 
     private fun downData() {
@@ -278,6 +279,7 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
         droidSettingsViewModel.listSelectedPosition = -1
         navigationCommandList.clearChoices()
         navigationCommandListAdapter.notifyDataSetChanged()
+        cleanup()
     }
 
     override fun onItemClick(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -308,6 +310,13 @@ class DroidNavigationFragment : Fragment(), OnItemClickListener {
                 }
             }
         }
+       cleanup()
+    }
+
+    private fun cleanup() {
+        droidSettingsViewModel.isNavigationDistanceChanged = false
+        droidSettingsViewModel.isNavigationRotateChanged = false
+        droidSettingsViewModel.isPowerChanged = false
     }
 
     private fun uploadData() {
